@@ -99,7 +99,7 @@
     <h2>🍴 Onde?</h2>
     <p class="note">📌 Escolha o restaurante que preferir e eu faço a reserva!</p>
     <div class="opt" role="button" tabindex="0" data-rest="Vignoli">🍝 Vignoli <a class="ml-1 text-pink-700 underline text-sm" href="https://www.instagram.com/vignolioficial/" target="_blank" rel="noopener">@vignolioficial</a></div>
-    <div class="opt" role="button" tabindex="0" data-rest="Funji Londe">🍣 Funji Londe <a class="ml-1 text-pink-700 underline text-sm" href="https://www.instagram.com/fujilounge/" target="_blank" rel="noopener">@fujilounge</a></div>
+    <div class="opt" role="button" tabindex="0" data-rest="Fuji Lounge">🍣 Fuji Lounge <a class="ml-1 text-pink-700 underline text-sm" href="https://www.instagram.com/fujilounge/" target="_blank" rel="noopener">@fujilounge</a></div>
     <div class="opt" role="button" tabindex="0" data-rest="Fivo Cozinha">🍽️ Fivo Cozinha <a class="ml-1 text-pink-700 underline text-sm" href="https://www.instagram.com/fivocozinha/" target="_blank" rel="noopener">@fivocozinha</a></div>
   </div>
   <p id="err1" class="err hidden"></p>
@@ -219,6 +219,7 @@ const $=id=>document.getElementById(id);
 const CMG='Meu Quarto (Comigo)',SEM='Meu Quarto (Sem mim)',UBER='Voltar pra casa de Uber (por minha conta)';
 let S,score,M;
 const fresh=()=>({ata:null,date:'',time:'',rest:'',sim:false});
+
 // Pontos: ataxia 3 + data 2 + restaurante 2 + sim 3 = 10
 // Meu Quarto (Comigo) +3 = 13 | Meu Quarto (Sem mim) +2 = 12 | Voltar de Uber +1 = 11
 const calc=()=>{
@@ -231,10 +232,13 @@ const calc=()=>{
   return pts;
 };
 
-// corações flutuantes
-for(let i=0;i<14;i++){const h=document.createElement('div');h.className='heart';h.textContent=i%3?'❤️':'💖';
+// Corações flutuantes
+for(let i=0;i<14;i++){
+  const h=document.createElement('div');h.className='heart';h.textContent=i%3?'❤️':'💖';
   h.style.left=Math.random()*100+'%';h.style.fontSize=(16+Math.random()*28)+'px';
-  h.style.animationDuration=(12+Math.random()*14)+'s';h.style.animationDelay=(-Math.random()*20)+'s';$('hearts').appendChild(h);}
+  h.style.animationDuration=(12+Math.random()*14)+'s';h.style.animationDelay=(-Math.random()*20)+'s';
+  $('hearts').appendChild(h);
+}
 
 function celebrate(){
   const o=$('celebrate');o.classList.remove('hidden');
@@ -251,7 +255,9 @@ function celebrate(){
       {duration:5500+Math.random()*3500,easing:'cubic-bezier(.2,.7,.4,1)',delay:Math.random()*700}).onfinish=()=>c.remove();
   }
 }
+
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2600);}
+
 function update(reason){
   const n=calc(),d=n-score;score=n;
   $('score-n').textContent=n+'/13';$('bar').style.width=n/13*100+'%';$('star').style.left=n/13*100+'%';
@@ -259,21 +265,25 @@ function update(reason){
   else if(d<0){$('score-reason').textContent='Pontuação ajustada: '+reason;}
   if(n===13&&d>0)celebrate();
 }
+
 const VIEWS=['p1','no-s','refuse','pic','p3','done'];
 let cur='p1';
 function go(id){cur=id;VIEWS.forEach(v=>$(v).classList.toggle('hidden',v!==id));window.scrollTo({top:0,behavior:'smooth'});}
+
 function resetM(){
   M={est:null,motel:''};
   document.querySelectorAll('[name=motel]').forEach(r=>r.checked=false);
   ['m-list','m-no','err3'].forEach(i=>$(i).classList.add('hidden'));
   mark('[data-est]','est','');
 }
+
 function back(to){
   if(cur==='pic'){S.sim=false;resetM();}
   if(cur==='p3'){M.motel='';document.querySelectorAll('[name=motel]').forEach(r=>r.checked=false);}
   $('celebrate').classList.add('hidden');
   go(to);update('voltou uma etapa');
 }
+
 function mark(sel,attr,val){document.querySelectorAll(sel).forEach(b=>b.classList.toggle('sel',b.dataset[attr]===val));}
 
 function resetAll(){
@@ -298,6 +308,7 @@ document.querySelectorAll('[data-ata]').forEach(b=>b.onclick=()=>{
   lock(res);
   update(res?'ressalvas anotadas: agora só o Não está disponível':'topou o ombro amigo 🤝');
 });
+
 // Calendário: Novembro 2026, só o dia 20 está disponível
 // 1º de Novembro de 2026 é Domingo (índice 6 na grade Seg..Dom)
 function markCal(){document.querySelectorAll('#cal [data-d]').forEach(b=>b.classList.toggle('sel',b.dataset.d===S.date));}
@@ -318,6 +329,7 @@ for(let d=1;d<=30;d++){
   $('cal').appendChild(box);
 }
 $('time').onchange=e=>S.time=e.target.value;
+
 // Restaurante
 document.querySelectorAll('[data-rest]').forEach(b=>{
   const pick=ev=>{
@@ -326,6 +338,7 @@ document.querySelectorAll('[data-rest]').forEach(b=>{
   };
   b.onclick=pick;b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e);}};
 });
+
 // Sim / Não
 $('yes').onclick=()=>{
   const miss=[];
@@ -355,18 +368,31 @@ function summary(){
   $('seal').innerHTML=`<div class="text-4xl">${sl[0]}</div><div class="text-base font-bold mt-1">Selo ${sl[1]}</div><div class="mt-1">${n}/13 ⭐️</div><div class="mt-1 font-normal">${sl[2]}</div>`;
   go('p3');
 }
-// Envio (Rayane)
+
+// Envio para SheetDB
 async function send(resp){
-  const data={data_envio:new Date().toLocaleString('pt-BR'),resposta:resp,ataxia:S.ata==='ok'?'Por mim tudo bem':(S.ata==='res'?'Tem ressalvas':''),
-    data_date:S.date,horario:S.time,restaurante:S.rest,motel:M.motel,pontos:calc()};
-  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});return r.ok;}
-  catch(e){return false;}
+  const data={
+    data_envio:new Date().toLocaleString('pt-BR'),
+    resposta:resp,
+    ataxia:S.ata==='ok'?'Por mim tudo bem':(S.ata==='res'?'Tem ressalvas':''),
+    data_date:S.date,
+    horario:S.time,
+    restaurante:S.rest,
+    motel:M.motel,
+    pontos:calc()
+  };
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+    return r.ok;
+  }catch(e){return false;}
 }
+
 async function conclude(btn,resp,next){
   const t=btn.textContent;btn.disabled=true;btn.textContent='Enviando...';
   const ok=await send(resp);btn.disabled=false;btn.textContent=t;
   if(ok)go(next);else toast('Não consegui enviar. Tente de novo 🙏');
 }
+
 $('conclude-no').onclick=e=>conclude(e.currentTarget,'NÃO','refuse');
 $('conclude-yes').onclick=e=>conclude(e.currentTarget,'SIM','done');
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>b.hasAttribute('data-back')?back(b.dataset.go):go(b.dataset.go));
@@ -398,10 +424,11 @@ document.querySelectorAll('[name=motel]').forEach(r=>r.onchange=()=>{
 
 $('to-sum').onclick=()=>{
   const r=document.querySelector('[name=motel]:checked');
-  if(!M.est||(M.est==='sim'&&!r)){$('err3').classList.remove('hidden');return;}
-  M.motel=r?r.value:'';
+  if(!M.est||!r){$('err3').classList.remove('hidden');return;}
+  M.motel=r.value;
   summary();
 };
+
 resetAll();
 </script>
 </body>
