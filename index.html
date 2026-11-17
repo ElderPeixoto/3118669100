@@ -215,6 +215,7 @@
 
 <script>
 const API='https://sheetdb.io/api/v1/7gbjq6nd3tqmx';
+const SHEET_NAME='Rayane';
 const $=id=>document.getElementById(id);
 const CMG='Meu Quarto (Comigo)',SEM='Meu Quarto (Sem mim)',UBER='Voltar pra casa de Uber (por minha conta)';
 let S,score,M;
@@ -382,7 +383,8 @@ async function send(resp){
     pontos:calc()
   };
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+    const url=`${API}?sheet=${encodeURIComponent(SHEET_NAME)}`;
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
     return r.ok;
   }catch(e){return false;}
 }
